@@ -1,7 +1,5 @@
 # Creating Recommended Alerts for Amazon OpenSearch Service with Terraform
 
-
-
 ## Introduction
 
 With the right monitoring tools, you can proactively identify potential issues before they impact your users. This article explores how to monitor Amazon OpenSearch Service using CloudWatch metrics and alerts, which offer powerful capabilities for tracking and maintaining the health and performance of your search and analytics workloads.
@@ -10,54 +8,115 @@ Amazon OpenSearch Service excels in search, log analytics, and RAG systems. It s
 
 Effective monitoring of Amazon OpenSearch Service is crucial for maintaining performance and availability. Utilizing CloudWatch metrics and alerts allows you to promptly identify and address potential issues, ensuring a seamless experience for your users.
 
-## Prerequisites
+## Installation
 
-- **Knowledge of Terraform and OpenSearch:** Basic understanding of Terraform’s infrastructure-as-code approach and familiarity with Amazon OpenSearch Service.
-- **AWS Account:** An active AWS account to deploy and manage OpenSearch Service.
-- **Amazon OpenSearch Service Cluster:** A running Amazon OpenSearch managed cluster
-- **Tools Required:**
-  - **Terraform:** Installed on your local machine or in the CI/CD pipeline.
-  - **AWS CLI:** Configured with your AWS credentials to interact with AWS services.
+Here are the instructions to initialize, plan, and apply a Terraform configuration:
 
-## **Metrics and alerts for Amazon OpenSearch service**
+1. **Install Terraform**:
 
-Amazon OpenSearch Service generates various metrics that help estimate and forecast cluster performance, monitor current load, and make informed decisions for cluster adjustments.
+   - Download Terraform from the [official website](https://www.terraform.io/downloads.html) for your operating system.
+- Follow the instructions to install it:
+	  - For Windows: Unzip the downloaded file and add the terraform.exe to your system’s PATH.
+  - For macOS: Use Homebrew with the command brew install terraform.
+     - For Linux: Unzip the downloaded file and move the terraform binary to /usr/local/bin/.
 
-Access these metrics in the AWS console via CloudWatch: **CloudWatch -> Metrics -> All Metrics -> ES/OpenSearch Metrics**. An automated dashboard allows you to track the evolution of different metrics over time.
+2. **Navigate to the Directory**:
 
-To receive notifications about potential issues, use alerts. Alerts are crucial for detecting and responding to problems in your OpenSearch cluster, such as:
+   - Open your terminal and change to the directory containing your Terraform configuration file
 
-- **Node Failures:** Identify when a node goes down, affecting cluster performance and data availability.
-  *Example:* NodesMinimum alert notifies if any node has been unreachable for one day.
-- **Indexing Issues:** Detect slow or failing indexing, impacting search performance and data freshness.
-  *Example:* ThreadpoolWriteQueue and ClusterIndexWritesBlocked alerts notify when indexing requests are blocked or queued excessively.
+3. **Initialize Terraform**:
 
-- **Query Performance:** Monitor query latency and throughput to ensure optimal search performance.
-  *Example:* ThreadpoolSearchQueueAverage and 5xxErrors alerts notify when query concurrency is high or query failures occur frequently.
+   - Open your terminal and navigate to the directory containing your Terraform configuration files.
+   - Run the following command to initialize your Terraform working directory. This will download the necessary provider plugins and set up the backend:
+     ```sh
+     terraform init
+     ```
 
-- **Storage Capacity:** Alert when storage capacity is approaching limits, preventing data loss and ensuring cluster stability.
-  *Example:* FreeStorageSpace alert notifies when a node’s free storage space is critically low.
+4. **Plan the Terraform Deployment**:
+   - After initialization, run the following command to create an execution plan. This command shows you what actions Terraform will take to achieve the desired state defined in your configuration files:
+     ```sh
+     terraform plan
+     ```
+   - Review the output to ensure that the proposed changes are what you expect.
 
-- **Cluster Health:** Monitor the overall health status of the cluster.
-  *Example:* ClusterStatusRed and ClusterStatusYellow alerts notify when primary shards or replica shards are not allocated to nodes.
+5. **Apply the Terraform Plan**:
+   - If the plan looks good, you can apply it by running the following command. This will make the actual changes to your infrastructure:
+     ```sh
+     terraform apply
+     ```
+   - Terraform will ask for confirmation before applying the changes. Type `yes` to proceed.
 
-- **JVM Memory Pressure:** Detect high JVM memory usage, which could lead to out-of-memory errors.
-  *Example:* JVMMemoryPressure and OldGenJVMMemoryPressure alerts notify when JVM memory pressure is critically high.
+These commands will set up your Terraform environment, plan your infrastructure changes, and apply those changes to your cloud provider.
 
-- **Snapshot Failures:** Identify issues with automated snapshots, crucial for data backup and recovery.
-  *Example:* AutomatedSnapshotFailure alert notifies if an automated snapshot fails.
+## Requirements
 
-- **Anomaly Detection and Plugins Health:** Monitor the health of various plugins and anomaly detection features.
-  *Example:* ADPluginUnhealthy and SQLUnhealthy alerts notify if the anomaly detection or SQL plugins are not functioning correctly.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~>1.9.1 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.58.0 |
 
-Recommended alerts for Amazon OpenSearch Service can be found here:
+## Providers
 
-- [Amazon OpenSearch Service CloudWatch Alarms](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/cloudwatch-alarms.html)
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.58.0 |
 
-We provide Terraform code that creates all recommended alerts listed in the AWS documentation. You do not need to set up all alerts for your cluster if you do not use plugins, UltraWarm, or master nodes. Review the descriptions and comment out unneeded alarms. You can uncomment required alarms anytime if you use these extra features in the future.
+## Modules
 
-The additional cost for alarm metrics is about $0.10 per month per metric.
+No modules.
 
-## **Conclusion**
+## Resources
 
-In this blog post, we've demonstrated how to create recommended alerts for Amazon OpenSearch Service using Terraform. By monitoring and alerting on these key metrics, you can ensure the reliability, performance, and scalability of your OpenSearch cluster. Remember to customize the alerts to fit your specific use case and environment.
+| Name | Type |
+|------|------|
+| [aws_cloudwatch_metric_alarm.ad_plugin_unhealthy_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.alerting_degraded_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.asynchronous_search_failure_rate_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.asynchronous_search_store_health_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.automated_snapshot_failure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.cluster_index_writes_blocked](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.cluster_status_red](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.cluster_status_yellow](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.cpu_utilization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.errors_5xx](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.free_storage_space](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.hot_to_warm_migration_failure_count_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.hot_to_warm_migration_queue_size_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.hot_to_warm_migration_success_latency_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.jvm_memory_pressure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.kms_key_error](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.kms_key_inaccessible](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.ltr_status_red_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.master_cpu_utilization_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.master_jvm_memory_pressure_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.master_old_gen_jvm_memory_pressure_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.master_reachable_from_node_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.nodes_minimum](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.old_gen_jvm_memory_pressure](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.opensearch_active_shards_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.sql_unhealthy_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.threadpool_search_queue_average](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.threadpool_search_queue_maximum](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.threadpool_search_rejected_increase](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.threadpool_write_queue](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.threadpool_write_rejected_increase](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_cpu_utilization](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_free_storage_space_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_jvm_memory_pressure_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_old_gen_jvm_memory_pressure_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_to_cold_migration_failure_count_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_to_cold_migration_latency_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.warm_to_cold_migration_queue_size_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_sns_topic.alarms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_subscription.email_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_alarms_email"></a> [alarms\_email](#input\_alarms\_email) | An e-mail address for the alarms for the OpenSearch cluster | `string` | n/a | yes |
+| <a name="input_domain"></a> [domain](#input\_domain) | The domain name of the OpenSearch cluster, which should be in lowercase | `string` | `"trc-workshop"` | no |
+| <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The count of instances to be deployed | `number` | `1` | no |
+| <a name="input_region"></a> [region](#input\_region) | The AWS region where the resources will be deployed | `string` | `"eu-central-1"` | no |
+
